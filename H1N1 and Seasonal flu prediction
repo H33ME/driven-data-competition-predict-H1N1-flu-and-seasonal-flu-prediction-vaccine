@@ -1,1 +1,165 @@
+setwd("C:/Users/Herman/Documents/hpi")
+
+test.feature<- read.csv(file="test_set_features.csv")
+train.feature<- read.csv(file="training_set_features.csv")
+
+train.feature$Istraindataset<- TRUE
+
+test.feature$Istraindataset<- FALSE
+
+#create h1n1_vaccine and seasonal_vaccine for prediction
+
+train.feature$h1n1_vaccine<-sample(c(0,1),size = 26707,replace = TRUE)
+
+train.feature$seasonal_vaccine<- sample(c(0,1),size = nrow(train.feature),replace = TRUE)
+
+test.feature$h1n1_vaccine<- NA
+
+test.feature$seasonal_vaccine<-NA
+
+#combine the two datasets
+
+train.test.feature<- rbind(train.feature,test.feature)
+
+View(train.test.feature)
+train.test.feature$h1n1_concern[is.na(train.test.feature$h1n1_concern)]<-median(train.test.feature$h1n1_concern,na.rm = TRUE)
+
+train.test.feature$h1n1_knowledge[is.na(train.test.feature$h1n1_knowledge)]<-median(train.test.feature$h1n1_knowledge,na.rm = TRUE)
+
+train.test.feature$behavioral_antiviral_meds[is.na(train.test.feature$behavioral_antiviral_meds)]<-median(train.test.feature$behavioral_antiviral_meds,na.rm = TRUE)
+
+train.test.feature$behavioral_avoidance[is.na(train.test.feature$behavioral_avoidance)]<-median(train.test.feature$behavioral_avoidance,na.rm = TRUE)
+
+train.test.feature$behavioral_face_mask[is.na(train.test.feature$behavioral_face_mask)]<-median(train.test.feature$behavioral_face_mask,na.rm = TRUE)
+
+train.test.feature$behavioral_wash_hands[is.na(train.test.feature$behavioral_wash_hands)]<-median(train.test.feature$behavioral_wash_hands,na.rm = TRUE)
+
+train.test.feature$behavioral_large_gatherings[is.na(train.test.feature$behavioral_large_gatherings)]<-median(train.test.feature$behavioral_large_gatherings,na.rm = TRUE)
+
+train.test.feature$behavioral_outside_home[is.na(train.test.feature$behavioral_outside_home)]<-median(train.test.feature$behavioral_outside_home,na.rm = TRUE)
+
+train.test.feature$behavioral_touch_face[is.na(train.test.feature$behavioral_touch_face)]<-median(train.test.feature$behavioral_touch_face,na.rm = TRUE)
+
+train.test.feature$doctor_recc_h1n1[is.na(train.test.feature$doctor_recc_h1n1)]<-median(train.test.feature$doctor_recc_h1n1,na.rm = TRUE)
+
+train.test.feature$doctor_recc_seasonal[is.na(train.test.feature$doctor_recc_seasonal)]<-median(train.test.feature$doctor_recc_seasonal,na.rm = TRUE)
+
+train.test.feature$chronic_med_condition[is.na(train.test.feature$chronic_med_condition)]<-median(train.test.feature$chronic_med_condition,na.rm = TRUE)
+
+train.test.feature$child_under_6_months[is.na(train.test.feature$child_under_6_months)]<-median(train.test.feature$child_under_6_months,na.rm = TRUE)
+
+train.test.feature$health_worker[is.na(train.test.feature$health_worker)]<-median(train.test.feature$health_worker,na.rm = TRUE)
+
+train.test.feature$health_insurance[is.na(train.test.feature$health_insurance)]<-median(train.test.feature$health_insurance,na.rm = TRUE)
+
+train.test.feature$opinion_h1n1_vacc_effective[is.na(train.test.feature$opinion_h1n1_vacc_effective)]<-median(train.test.feature$opinion_h1n1_vacc_effective,na.rm = TRUE)
+
+train.test.feature$opinion_h1n1_risk[is.na(train.test.feature$opinion_h1n1_risk)]<-median(train.test.feature$opinion_h1n1_risk,na.rm = TRUE)
+
+train.test.feature$opinion_h1n1_sick_from_vacc[is.na(train.test.feature$opinion_h1n1_sick_from_vacc)]<-median(train.test.feature$opinion_h1n1_sick_from_vacc,na.rm = TRUE)
+
+train.test.feature$opinion_seas_vacc_effective[is.na(train.test.feature$opinion_seas_vacc_effective)]<-median(train.test.feature$opinion_seas_vacc_effective,na.rm = TRUE)
+
+train.test.feature$opinion_seas_risk[is.na(train.test.feature$opinion_seas_risk)]<-median(train.test.feature$opinion_seas_risk,na.rm = TRUE)
+
+train.test.feature$opinion_seas_sick_from_vacc[is.na(train.test.feature$opinion_seas_sick_from_vacc)]<-median(train.test.feature$opinion_seas_sick_from_vacc,na.rm = TRUE)
+
+train.test.feature$household_adults[is.na(train.test.feature$household_adults)]<-median(train.test.feature$household_adults,na.rm = TRUE)
+
+train.test.feature$household_children[is.na(train.test.feature$household_children)]<-median(train.test.feature$household_children,na.rm = TRUE)
+
+
+train.test.feature[train.test.feature$employment_industry=="","employment_industry"]<-"wxleyezf"
+
+train.test.feature[train.test.feature$employment_occupation=="","employment_occupation"]<-"mxkfnird"
+
+#categorical casting
+
+train.test.feature$age_group<-as.factor(train.test.feature$age_group)
+
+train.test.feature$education<-as.factor(train.test.feature$education)
+
+train.test.feature$race<-as.factor(train.test.feature$race)
+
+train.test.feature$sex<-as.factor(train.test.feature$sex)
+
+train.test.feature$income_poverty<-as.factor(train.test.feature$income_poverty)
+
+train.test.feature$marital_status<-as.factor(train.test.feature$marital_status)
+
+train.test.feature$rent_or_own<-as.factor(train.test.feature$rent_or_own)
+
+train.test.feature$employment_status<-as.factor(train.test.feature$employment_status)
+
+train.test.feature$hhs_geo_region<-as.factor(train.test.feature$hhs_geo_region)
+
+train.test.feature$census_msa<-as.factor(train.test.feature$census_msa)
+
+train.test.feature$employment_industry<-as.factor(train.test.feature$employment_industry)
+
+train.test.feature$employment_occupation<-as.factor(train.test.feature$employment_occupation)
+
+
+#split the data back to test.feature and train.features
+
+test.feature<- train.test.feature[train.test.feature$Istraindataset==FALSE,]
+
+train.feature<- train.test.feature[train.test.feature$Istraindataset==TRUE,]
+
+
+h1n1.equation<- "h1n1_vaccine~h1n1_concern+h1n1_knowledge+behavioral_antiviral_meds+behavioral_avoidance+
+behavioral_face_mask+behavioral_wash_hands+behavioral_large_gatherings+behavioral_outside_home+
+behavioral_touch_face+doctor_recc_h1n1+doctor_recc_seasonal+chronic_med_condition+child_under_6_months+
+health_worker+health_insurance+opinion_h1n1_vacc_effective+opinion_h1n1_risk+opinion_h1n1_sick_from_vacc+
+opinion_seas_vacc_effective+opinion_seas_risk+opinion_seas_sick_from_vacc+                 
+race+sex+marital_status+household_adults+household_children"
+
+h1n1.formula<- as.formula(h1n1.equation)
+
+library(randomForest)
+
+h1n1_vaccine.model<-randomForest(formula=h1n1.formula,data=train.feature,ntree=500,mtry=3,nodesize=0.01*nrow(test.feature))
+
+h1n1_vaccinefeatures<- "h1n1_concern+h1n1_knowledge+behavioral_antiviral_meds+behavioral_avoidance+
+behavioral_face_mask+behavioral_wash_hands+behavioral_large_gatherings+behavioral_outside_home+
+behavioral_touch_face+doctor_recc_h1n1+doctor_recc_seasonal+chronic_med_condition+child_under_6_months+
+health_worker+health_insurance+opinion_h1n1_vacc_effective+opinion_h1n1_risk+opinion_h1n1_sick_from_vacc+
+opinion_seas_vacc_effective+opinion_seas_risk+opinion_seas_sick_from_vacc+                 
+race+sex+marital_status+household_adults+household_children"
+
+h1n1_vaccine<- predict(h1n1_vaccine.model,newdata=test.feature)
+
+h1n1_vaccine<-round(h1n1_vaccine,1)
+
+output.df<-as.data.frame(h1n1_vaccine)
+
+respondent_id<- test.feature$respondent_id
+
+output.df$respondent_id<- respondent_id
+
+
+seasonal.vaccine.equation<- "seasonal_vaccine~h1n1_concern+h1n1_knowledge+behavioral_antiviral_meds+behavioral_avoidance+
+behavioral_face_mask+behavioral_wash_hands+behavioral_large_gatherings+behavioral_outside_home+
+behavioral_touch_face+doctor_recc_h1n1+doctor_recc_seasonal+chronic_med_condition+child_under_6_months+
+health_worker+health_insurance+opinion_h1n1_vacc_effective+opinion_h1n1_risk+opinion_h1n1_sick_from_vacc+
+opinion_seas_vacc_effective+opinion_seas_risk+opinion_seas_sick_from_vacc+                 
+race+sex+marital_status+household_adults+household_children"
+
+seasonal.vaccine.formula<- as.formula(seasonal.vaccine.equation)
+
+library(randomForest)
+
+#create the model
+seasonal.model<-randomForest(formula=seasonal.vaccine.formula,data=train.feature,ntree=500,mtry=3,nodesize=0.01*nrow(test.feature))
+
+#predict for test features
+seasonal_vaccine<- predict(seasonal.model,newdata=test.feature)
+
+seasonal.vaccine<-round(seasonal_vaccine,1)
+
+output.df$seasonal_vaccine<- seasonal.vaccine
+
+output.df2<-output.df[,c(2,1,3)]
+
+write.csv(output.df2,file = "output.df2.csv",row.names=FALSE)
 
